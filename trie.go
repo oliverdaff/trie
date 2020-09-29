@@ -90,3 +90,21 @@ func (ts *trieNode) delete(key string, keyIndex int) (deleted bool, empty bool) 
 	}
 	return
 }
+
+func (ts *trieNode) longestPrefixOf(s string, sIndex int) (result interface{}) {
+	result = nil
+	if sIndex == len(s) {
+		if ts.value != nil {
+			result = s
+		}
+	} else {
+		next := s[sIndex]
+		if nextNode, ok := ts.links[next]; ok {
+			result = nextNode.longestPrefixOf(s, sIndex+1)
+			if result == nil && !(ts.value == nil) {
+				result = s[:sIndex]
+			}
+		}
+	}
+	return
+}
