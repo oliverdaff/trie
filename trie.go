@@ -53,3 +53,14 @@ func (ts *trieNode) getNode(key string, keyIndex int) *trieNode {
 	}
 	return nil
 }
+
+func (ts *trieNode) contains(key string) bool {
+	return ts.getNode(key, 0) != nil
+}
+
+func (ts *trieNode) get(key string) interface{} {
+	if node := ts.getNode(key, 0); node != nil {
+		return node.value
+	}
+	return nil
+}
