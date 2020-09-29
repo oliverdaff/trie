@@ -7,3 +7,19 @@ type trieNode struct {
 	size  int
 	value interface{}
 }
+
+func newTrieNode(key string, value interface{}, keyIndex int) *trieNode {
+	if keyIndex == len(key) {
+		return &trieNode{
+			size:  0,
+			value: value,
+			links: make(map[byte]*trieNode),
+		}
+	}
+	links := make(map[byte]*trieNode)
+	links[key[keyIndex]] = newTrieNode(key, value, keyIndex+1)
+	return &trieNode{
+		size:  1,
+		links: links,
+	}
+}
