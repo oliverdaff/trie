@@ -23,3 +23,22 @@ func newTrieNode(key string, value interface{}, keyIndex int) *trieNode {
 		links: links,
 	}
 }
+
+func (ts *trieNode) put(key string, value interface{}, keyIndex int) bool {
+	if keyIndex == len(key) {
+		isNewKey := ts.value == nil
+		ts.value = value
+		return isNewKey
+	}
+	next := key[keyIndex]
+	if nextNode, ok := ts.links[next]; ok {
+		isNewKey := nextNode.put(key, value, keyIndex+1)
+		if isNewKey {
+			ts.size++
+		}
+		return isNewKey
+	}
+	ts.size++
+	ts.links[next] = newTrieNode(key, value, keyIndex+1)
+	return true
+}
