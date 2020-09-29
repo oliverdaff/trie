@@ -42,3 +42,14 @@ func (ts *trieNode) put(key string, value interface{}, keyIndex int) bool {
 	ts.links[next] = newTrieNode(key, value, keyIndex+1)
 	return true
 }
+
+func (ts *trieNode) getNode(key string, keyIndex int) *trieNode {
+	if keyIndex == len(key) {
+		return ts
+	}
+	next := key[keyIndex]
+	if nextNode, ok := ts.links[next]; ok {
+		return nextNode.getNode(key, keyIndex+1)
+	}
+	return nil
+}
