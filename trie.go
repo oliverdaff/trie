@@ -64,3 +64,29 @@ func (ts *trieNode) get(key string) interface{} {
 	}
 	return nil
 }
+
+func (ts *trieNode) delete(key string, keyIndex int) (deleted bool, empty bool) {
+	deleted, empty = false, false
+	if keyIndex == len(key) {
+		deleted = ts.value == nil
+		if deleted {
+			ts.value = nil
+			if ts.size == 0 {
+				empty = true
+			}
+		}
+	} else {
+		next := key[keyIndex]
+		if nextNode, ok := ts.links[next]; ok {
+			deleted, empty = nextNode.delete(key, keyIndex+1)
+			if deleted {
+				ts.size--
+			}
+			if empty {
+				delete(ts.links, next)
+				empty = ts.size == 0 && ts.value == nil
+			}
+		}
+	}
+	return
+}
