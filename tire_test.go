@@ -13,6 +13,7 @@ func TestNewTrieNode(t *testing.T) {
 		errorExpected bool
 	}{
 		{"www.testing.com", nil, 0, false},
+		{"www.testing.com", nil, len("www.testing.com"), false},
 		{"www.testing.com", nil, 100, true},
 		{"www.testing.com", nil, -1, true},
 	}

@@ -29,14 +29,14 @@ func newTrieNode(key string, value interface{}, keyIndex int) (*trieNode, error)
 	if keyIndex < 0 {
 		return nil, errors.Errorf("Key index less than 0 (%d) for key %s", keyIndex, key)
 	}
+	links := make(map[byte]*trieNode)
 	if int(keyIndex) == len(key) {
 		return &trieNode{
 			size:  0,
 			value: value,
-			links: make(map[byte]*trieNode),
+			links: links,
 		}, nil
 	}
-	links := make(map[byte]*trieNode)
 	node, err := newTrieNode(key, value, keyIndex+1)
 	if err != nil {
 		return nil, err
