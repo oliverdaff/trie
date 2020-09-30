@@ -42,9 +42,12 @@ func TestPut(t *testing.T) {
 		errorExpected bool
 	}{
 		{map[string]interface{}{
-			"www.test.com": 1,
-		},
-			1, false},
+			"www.test.com":    1,
+			"www.example.com": 1,
+		}, 2, false},
+		{map[string]interface{}{
+			"www.example.com": 1,
+		}, 1, false},
 	}
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%s", tt.keyValues)
