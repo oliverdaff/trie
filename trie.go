@@ -1,5 +1,9 @@
 package trie
 
+import (
+	"sort"
+)
+
 // trieNode is a internal representation of a trie.
 //
 type trieNode struct {
@@ -91,20 +95,56 @@ func (ts *trieNode) delete(key string, keyIndex int) (deleted bool, empty bool) 
 	return
 }
 
-func (ts *trieNode) longestPrefixOf(s string, sIndex int) (result interface{}) {
+func (ts *trieNode) longestPrefixOf(s string, sIndex int) (result *string) {
 	result = nil
 	if sIndex == len(s) {
 		if ts.value != nil {
-			result = s
+			result = &s
 		}
 	} else {
 		next := s[sIndex]
 		if nextNode, ok := ts.links[next]; ok {
 			result = nextNode.longestPrefixOf(s, sIndex+1)
 			if result == nil && !(ts.value == nil) {
-				result = s[:sIndex]
+				partial := s[:sIndex]
+				result = &partial
 			}
 		}
 	}
 	return
+}
+
+type nodeKeyValue struct {
+	key   string
+	value interface{}
+}
+
+type bytes []byte
+
+func (a bytes) Len() int           { return len(a) }
+func (a bytes) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a bytes) Less(i, j int) bool { return a[i] < a[j] }
+
+func (ts *trieNode) items(path []byte) <-chan nodeKeyValue {
+	ch := make(chan nodeKeyValue, 1)
+	go func() {
+		if ts.value != nil {
+			ch <- nodeKeyValue{key: string(path), value: ts.value}
+		}
+		var sortedKeys bytes
+		sortedKeys = make([]byte, len(ts.links))
+		for key := range ts.links {
+			sortedKeys = append(sortedKeys, key)
+		}
+		sort.Sort(sortedKeys)
+		for _, key := range sortedKeys {
+			path = append(path, key)
+			for kv := range ts.links[key].items(path) {
+				ch <- kv
+			}
+			path = path[:len(path)-1]
+		}
+		close(ch)
+	}()
+	return ch
 }
