@@ -50,7 +50,17 @@ func newTrieNode(key string, value interface{}, keyIndex int) (*trieNode, error)
 
 }
 
+// put stores a key value pair in the trie.
+// Returns true unless the key was already in the trie and got updated.
+// A error is returned if the keyIndex is greater than the length of the key
+// or the keyIndex is less than 0.
 func (ts *trieNode) put(key string, value interface{}, keyIndex int) (bool, error) {
+	if keyIndex > len(key) {
+		return false, errors.Errorf("Key index %d greater than key length %d for key %s", keyIndex, len(key), key)
+	}
+	if keyIndex < 0 {
+		return false, errors.Errorf("Key index less than 0 (%d) for key %s", keyIndex, key)
+	}
 	if keyIndex == len(key) {
 		isNewKey := ts.value == nil
 		ts.value = value
