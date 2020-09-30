@@ -148,3 +148,14 @@ func (ts *trieNode) items(path []byte) <-chan nodeKeyValue {
 	}()
 	return ch
 }
+
+func (ts *trieNode) keys(path []byte) <-chan string {
+	ch := make(chan string, 1)
+	go func() {
+		for keyValue := range ts.items(path) {
+			ch <- keyValue.key
+		}
+		close(ch)
+	}()
+	return ch
+}
