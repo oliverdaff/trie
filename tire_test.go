@@ -14,6 +14,7 @@ func TestNewTrieNode(t *testing.T) {
 	}{
 		{"www.testing.com", nil, 0, false},
 		{"www.testing.com", nil, 100, true},
+		{"www.testing.com", nil, -1, true},
 	}
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%s", tt.key)
