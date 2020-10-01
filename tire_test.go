@@ -68,6 +68,10 @@ func TestPut(t *testing.T) {
 			PutValue{"www.example.com", 1, len("www.example.com"), 0, true, false},
 			PutValue{"www.example.com", 2, len("www.example.com"), 0, false, false},
 		}},
+		{[]PutValue{ //multiple values
+			PutValue{"www.test.com", 1, 0, 1, true, false},
+			PutValue{"www.example.com", 2, 0, 2, true, false},
+		}},
 	}
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%v", tt.params)
