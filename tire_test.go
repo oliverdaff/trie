@@ -50,16 +50,23 @@ func TestPut(t *testing.T) {
 	}{
 		{[]PutValue{ // two keys
 			PutValue{"www.test.com", 1, 0, 1, true, false},
-			PutValue{"www.example..com", 1, 0, 2, true, false},
+			PutValue{"www.example.com", 1, 0, 2, true, false},
 		}},
 		{[]PutValue{ // single key
-			PutValue{"www.example..com", 1, 0, 1, true, false},
+			PutValue{"www.example.com", 1, 0, 1, true, false},
 		}},
 		{[]PutValue{ //key index > len(key)
-			PutValue{"www.example..com", 1, 100, 1, true, true},
+			PutValue{"www.example.com", 1, 100, 1, true, true},
 		}},
 		{[]PutValue{ //key index < 0
-			PutValue{"www.example..com", 1, -1, 1, true, true},
+			PutValue{"www.example.com", 1, -1, 1, true, true},
+		}},
+		{[]PutValue{ //keyIndex == len(key)
+			PutValue{"www.example.com", 1, len("www.example.com"), 0, true, false},
+		}},
+		{[]PutValue{ //keyIndex == len(key), update value
+			PutValue{"www.example.com", 1, len("www.example.com"), 0, true, false},
+			PutValue{"www.example.com", 2, len("www.example.com"), 0, false, false},
 		}},
 	}
 	for _, tt := range tests {
