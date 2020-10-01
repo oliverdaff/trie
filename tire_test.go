@@ -35,35 +35,51 @@ func TestNewTrieNode(t *testing.T) {
 	}
 }
 
+type PutValue struct {
+	key            string
+	value          interface{}
+	keyIndex       int
+	expectedSize   int
+	expectedNewKey bool
+	errorExpected  bool
+}
+
 func TestPut(t *testing.T) {
 	var tests = []struct {
-		keyValues     map[string]interface{}
-		expectedSize  int
-		errorExpected bool
+		params []PutValue
 	}{
-		{map[string]interface{}{
-			"www.test.com":    1,
-			"www.example.com": 1,
-		}, 2, false},
-		{map[string]interface{}{
-			"www.example.com": 1,
-		}, 1, false},
+		{[]PutValue{ // two keys
+			PutValue{"www.test.com", 1, 0, 1, true, false},
+			PutValue{"www.example..com", 1, 0, 2, true, false},
+		}},
+		{[]PutValue{ // single key
+			PutValue{"www.example..com", 1, 0, 1, true, false},
+		}},
+		{[]PutValue{ //key index > len(key)
+			PutValue{"www.example..com", 1, 100, 1, true, true},
+		}},
+		{[]PutValue{ //key index < 0
+			PutValue{"www.example..com", 1, -1, 1, true, true},
+		}},
 	}
 	for _, tt := range tests {
-		testname := fmt.Sprintf("%s", tt.keyValues)
+		testname := fmt.Sprintf("%v", tt.params)
 		t.Run(testname, func(t *testing.T) {
-			node, err := newTrieNode("", nil, 0)
-			for key, value := range tt.keyValues {
-				node.put(key, value, 0)
-			}
-			if !tt.errorExpected && err != nil {
-				t.Errorf("Error was not expected")
-			}
-			if tt.errorExpected && err == nil {
-				t.Errorf("Error was expected")
-			}
-			if !tt.errorExpected && node.size != tt.expectedSize {
-				t.Errorf("Expected size %d go %d", tt.expectedSize, node.size)
+			node, _ := newTrieNode("", nil, 0)
+			for _, param := range tt.params {
+				newKey, err := node.put(param.key, param.value, param.keyIndex)
+				if !param.errorExpected && err != nil {
+					t.Errorf("Error was not expected")
+				}
+				if param.errorExpected && err == nil {
+					t.Errorf("Error was expected")
+				}
+				if !param.errorExpected && node.size != param.expectedSize {
+					t.Errorf("Expected size %d go %d", param.expectedSize, node.size)
+				}
+				if !param.errorExpected && newKey != param.expectedNewKey {
+					t.Errorf("Expected newKey %t go %t", param.expectedNewKey, newKey)
+				}
 			}
 		})
 	}
