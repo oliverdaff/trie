@@ -16,7 +16,6 @@ type trieNode struct {
 //
 // - key: the possibly empty key to store in the trie
 // - value: the value to be associated with the key
-// - keyIndex: the index of the start of the substring of the key to store in this subtrie.
 func newTrieNode(key string, value interface{}) *trieNode {
 	links := make(map[byte]*trieNode)
 	if len(key) == 0 {
@@ -38,8 +37,6 @@ func newTrieNode(key string, value interface{}) *trieNode {
 
 // put stores a key value pair in the trie.
 // Returns true unless the key was already in the trie and got updated.
-// A error is returned if the keyIndex is greater than the length of the key
-// or the keyIndex is less than 0.
 func (ts *trieNode) put(key string, value interface{}) bool {
 	if len(key) == 0 {
 		isNewKey := ts.value == nil
