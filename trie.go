@@ -68,10 +68,14 @@ func (ts *trieNode) getNode(key string) *trieNode {
 	return nil
 }
 
+// Returns true if the key is in the trie
+// else returns false.
 func (ts *trieNode) contains(key string) bool {
 	return ts.getNode(key) != nil
 }
 
+// Returns the value for the key else
+// returns nil, if the key is not in the trie.
 func (ts *trieNode) get(key string) interface{} {
 	if node := ts.getNode(key); node != nil {
 		return node.value
