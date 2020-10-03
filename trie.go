@@ -2,15 +2,10 @@ package trie
 
 import (
 	"sort"
-
-	"github.com/pkg/errors"
 )
 
 // trieNode is a internal representation of a trie.
 // Each node is root of its sub-trie. trieNode allows searching and adding new key-value pairs.
-// Most operations, along with a string for the key, an index is passed, to mark the
-// next character in the key that should be acted upon, rather than passing a substring with the first character removed.
-// This is an optimization that allows keeping the asymptotic time required for each operation linear in the length of key.
 type trieNode struct {
 	links map[byte]*trieNode
 	size  int
@@ -22,31 +17,22 @@ type trieNode struct {
 // - key: the possibly empty key to store in the trie
 // - value: the value to be associated with the key
 // - keyIndex: the index of the start of the substring of the key to store in this subtrie.
-func newTrieNode(key string, value interface{}, keyIndex int) (*trieNode, error) {
-	if keyIndex > len(key) {
-		return nil, errors.Errorf("Key index %d greater than key length %d for key %s", keyIndex, len(key), key)
-	}
-	if keyIndex < 0 {
-		return nil, errors.Errorf("Key index less than 0 (%d) for key %s", keyIndex, key)
-	}
+func newTrieNode(key string, value interface{}) *trieNode {
 	links := make(map[byte]*trieNode)
-	if int(keyIndex) == len(key) {
+	if len(key) == 0 {
 		return &trieNode{
 			size:  0,
 			value: value,
 			links: links,
-		}, nil
+		}
 	}
-	node, err := newTrieNode(key, value, keyIndex+1)
-	if err != nil {
-		return nil, err
-	}
-	links[key[keyIndex]] = node
+	node := newTrieNode(key[1:], value)
+	links[key[0]] = node
 
 	return &trieNode{
 		size:  1,
 		links: links,
-	}, nil
+	}
 
 }
 
@@ -54,67 +40,51 @@ func newTrieNode(key string, value interface{}, keyIndex int) (*trieNode, error)
 // Returns true unless the key was already in the trie and got updated.
 // A error is returned if the keyIndex is greater than the length of the key
 // or the keyIndex is less than 0.
-func (ts *trieNode) Put(key string, value interface{}) (bool, error) {
-	return ts.put(key, value, 0)
-}
-
-func (ts *trieNode) put(key string, value interface{}, keyIndex int) (bool, error) {
-	if keyIndex > len(key) {
-		return false, errors.Errorf("Key index %d greater than key length %d for key %s", keyIndex, len(key), key)
-	}
-	if keyIndex < 0 {
-		return false, errors.Errorf("Key index less than 0 (%d) for key %s", keyIndex, key)
-	}
-	if keyIndex == len(key) {
+func (ts *trieNode) put(key string, value interface{}) bool {
+	if len(key) == 0 {
 		isNewKey := ts.value == nil
 		ts.value = value
-		return isNewKey, nil
+		return isNewKey
 	}
-	next := key[keyIndex]
+	next := key[0]
 	if nextNode, ok := ts.links[next]; ok {
-		isNewKey, err := nextNode.put(key, value, keyIndex+1)
-		if err != nil {
-			return false, err
-		}
+		isNewKey := nextNode.put(key[1:], value)
 		if isNewKey {
 			ts.size++
 		}
-		return isNewKey, nil
+		return isNewKey
 	}
 	ts.size++
-	node, err := newTrieNode(key, value, keyIndex+1)
-	if err != nil {
-		return false, err
-	}
+	node := newTrieNode(key[1:], value)
 	ts.links[next] = node
-	return true, nil
+	return true
 }
 
-func (ts *trieNode) getNode(key string, keyIndex int) *trieNode {
-	if keyIndex == len(key) {
+func (ts *trieNode) getNode(key string) *trieNode {
+	if len(key) == 0 {
 		return ts
 	}
-	next := key[keyIndex]
+	next := key[0]
 	if nextNode, ok := ts.links[next]; ok {
-		return nextNode.getNode(key, keyIndex+1)
+		return nextNode.getNode(key[1:])
 	}
 	return nil
 }
 
 func (ts *trieNode) contains(key string) bool {
-	return ts.getNode(key, 0) != nil
+	return ts.getNode(key) != nil
 }
 
 func (ts *trieNode) get(key string) interface{} {
-	if node := ts.getNode(key, 0); node != nil {
+	if node := ts.getNode(key); node != nil {
 		return node.value
 	}
 	return nil
 }
 
-func (ts *trieNode) delete(key string, keyIndex int) (deleted bool, empty bool) {
+func (ts *trieNode) delete(key string) (deleted bool, empty bool) {
 	deleted, empty = false, false
-	if keyIndex == len(key) {
+	if len(key) == 0 {
 		deleted = ts.value == nil
 		if deleted {
 			ts.value = nil
@@ -123,9 +93,9 @@ func (ts *trieNode) delete(key string, keyIndex int) (deleted bool, empty bool) 
 			}
 		}
 	} else {
-		next := key[keyIndex]
+		next := key[0]
 		if nextNode, ok := ts.links[next]; ok {
-			deleted, empty = nextNode.delete(key, keyIndex+1)
+			deleted, empty = nextNode.delete(key[1:])
 			if deleted {
 				ts.size--
 			}
