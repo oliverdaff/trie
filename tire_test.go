@@ -42,9 +42,9 @@ func TestPut(t *testing.T) {
 		{[]PutValue{ // single key
 			PutValue{"www.example.com", 1, 1, true},
 		}},
-		{[]PutValue{ //multiple values
+		{[]PutValue{ //update value
 			PutValue{"www.test.com", 1, 1, true},
-			PutValue{"www.example.com", 2, 2, true},
+			PutValue{"www.test.com", 2, 1, false},
 		}},
 	}
 	for _, tt := range tests {
