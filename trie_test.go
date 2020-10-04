@@ -170,21 +170,21 @@ func TestDelete(t *testing.T) {
 		params    []PutValue
 		deletions []DeleteValue
 	}{
-		//{[]PutValue{ // Delete value
-		//	PutValue{"www.test.com", 1, 1, true},
-		//},
-		//	[]DeleteValue{
-		//		DeleteValue{"www.test.com", true, true},
-		//		DeleteValue{"www.test.com", false, false},
-		//	},
-		//},
-		//{[]PutValue{ // Delete partial key
-		//	PutValue{"www.test.com", 1, 1, true},
-		//},
-		//	[]DeleteValue{
-		//		DeleteValue{"www.test", false, false},
-		//	},
-		//},
+		{[]PutValue{ // Delete value
+			PutValue{"www.test.com", 1, 1, true},
+		},
+			[]DeleteValue{
+				DeleteValue{"www.test.com", true, true},
+				DeleteValue{"www.test.com", false, false},
+			},
+		},
+		{[]PutValue{ // Delete partial key
+			PutValue{"www.test.com", 1, 1, true},
+		},
+			[]DeleteValue{
+				DeleteValue{"www.test", false, false},
+			},
+		},
 		{[]PutValue{ // Delete shared key
 			PutValue{"www.test.com", 1, 1, true},
 			PutValue{"www.example.com", 1, 1, true},
