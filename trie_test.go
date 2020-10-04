@@ -31,6 +31,11 @@ type PutValue struct {
 	expectedNewKey bool
 }
 
+type DeleteValue struct {
+	key            string
+	deleted, empty bool
+}
+
 func TestPut(t *testing.T) {
 	var tests = []struct {
 		params []PutValue
@@ -162,20 +167,22 @@ func TestGet(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	var tests = []struct {
-		params   []PutValue
-		toDelete string
-		deleted  bool
-		empty    bool
+		params    []PutValue
+		deletions []DeleteValue
 	}{
 		{[]PutValue{ // Get value
 			PutValue{"www.test.com", 1, 1, true},
-		}, "www.test.com", true, true},
-		//{[]PutValue{ // Get Value
-		//	PutValue{"www.example.com", 2, 1, true},
-		//}, "www.example.com", 2},
-		//{[]PutValue{ // Value not found
-		//	PutValue{"www.example.com", 2, 1, true},
-		//}, "www.test.com", nil},
+		},
+			[]DeleteValue{
+				DeleteValue{"www.test.com", true, true},
+			},
+			//{[]PutValue{ // Get Value
+			//	PutValue{"www.example.com", 2, 1, true},
+			//}, "www.example.com", 2},
+			//{[]PutValue{ // Value not found
+			//	PutValue{"www.example.com", 2, 1, true},
+			//}, "www.test.com", nil},
+		},
 	}
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%v", tt.params)
@@ -184,12 +191,15 @@ func TestDelete(t *testing.T) {
 			for _, param := range tt.params {
 				node.put(param.key, param.value)
 			}
-			deleted, empty := node.delete(tt.toDelete)
-			if tt.deleted != deleted {
-				t.Errorf("Expected deleted %t got %t", tt.deleted, deleted)
-			}
-			if tt.empty != empty {
-				t.Errorf("Expected deleted %t got %t", tt.empty, empty)
+			for _, deletion := range tt.deletions {
+				deleted, empty := node.delete(deletion.key)
+				if deletion.deleted != deleted {
+					t.Errorf("Expected deleted %t got %t", deletion.deleted, deleted)
+				}
+				if deletion.empty != empty {
+					t.Errorf("Expected deleted %t got %t", deletion.deleted, empty)
+				}
+
 			}
 		})
 	}
