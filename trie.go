@@ -86,7 +86,7 @@ func (ts *trieNode) get(key string) interface{} {
 func (ts *trieNode) delete(key string) (deleted bool, empty bool) {
 	deleted, empty = false, false
 	if len(key) == 0 {
-		deleted = ts.value == nil
+		deleted = ts.value != nil
 		if deleted {
 			ts.value = nil
 			if ts.size == 0 {

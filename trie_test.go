@@ -159,3 +159,38 @@ func TestGet(t *testing.T) {
 		})
 	}
 }
+
+func TestDelete(t *testing.T) {
+	var tests = []struct {
+		params   []PutValue
+		toDelete string
+		deleted  bool
+		empty    bool
+	}{
+		{[]PutValue{ // Get value
+			PutValue{"www.test.com", 1, 1, true},
+		}, "www.test.com", true, true},
+		//{[]PutValue{ // Get Value
+		//	PutValue{"www.example.com", 2, 1, true},
+		//}, "www.example.com", 2},
+		//{[]PutValue{ // Value not found
+		//	PutValue{"www.example.com", 2, 1, true},
+		//}, "www.test.com", nil},
+	}
+	for _, tt := range tests {
+		testname := fmt.Sprintf("%v", tt.params)
+		t.Run(testname, func(t *testing.T) {
+			node := newTrieNode("", nil)
+			for _, param := range tt.params {
+				node.put(param.key, param.value)
+			}
+			deleted, empty := node.delete(tt.toDelete)
+			if tt.deleted != deleted {
+				t.Errorf("Expected deleted %t got %t", tt.deleted, deleted)
+			}
+			if tt.empty != empty {
+				t.Errorf("Expected deleted %t got %t", tt.empty, empty)
+			}
+		})
+	}
+}
