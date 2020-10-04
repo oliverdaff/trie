@@ -170,20 +170,30 @@ func TestDelete(t *testing.T) {
 		params    []PutValue
 		deletions []DeleteValue
 	}{
-		{[]PutValue{ // Get value
+		//{[]PutValue{ // Delete value
+		//	PutValue{"www.test.com", 1, 1, true},
+		//},
+		//	[]DeleteValue{
+		//		DeleteValue{"www.test.com", true, true},
+		//		DeleteValue{"www.test.com", false, false},
+		//	},
+		//},
+		//{[]PutValue{ // Delete partial key
+		//	PutValue{"www.test.com", 1, 1, true},
+		//},
+		//	[]DeleteValue{
+		//		DeleteValue{"www.test", false, false},
+		//	},
+		//},
+		{[]PutValue{ // Delete shared key
 			PutValue{"www.test.com", 1, 1, true},
+			PutValue{"www.example.com", 1, 1, true},
 		},
 			[]DeleteValue{
-				DeleteValue{"www.test.com", true, true},
+				DeleteValue{"www.test.com", true, false},
+				DeleteValue{"www.example.com", true, true},
 			},
-			//{[]PutValue{ // Get Value
-			//	PutValue{"www.example.com", 2, 1, true},
-			//}, "www.example.com", 2},
-			//{[]PutValue{ // Value not found
-			//	PutValue{"www.example.com", 2, 1, true},
-			//}, "www.test.com", nil},
-		},
-	}
+		}}
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%v", tt.params)
 		t.Run(testname, func(t *testing.T) {
@@ -197,7 +207,7 @@ func TestDelete(t *testing.T) {
 					t.Errorf("Expected deleted %t got %t", deletion.deleted, deleted)
 				}
 				if deletion.empty != empty {
-					t.Errorf("Expected deleted %t got %t", deletion.deleted, empty)
+					t.Errorf("Expected empty %t got %t", deletion.empty, empty)
 				}
 
 			}

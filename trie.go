@@ -57,6 +57,7 @@ func (ts *trieNode) put(key string, value interface{}) bool {
 	return true
 }
 
+//	getNode returns the node with the given key
 func (ts *trieNode) getNode(key string) *trieNode {
 	if len(key) == 0 {
 		return ts
@@ -68,13 +69,13 @@ func (ts *trieNode) getNode(key string) *trieNode {
 	return nil
 }
 
-// Returns true if the key is in the trie
+// contains returns true if the key is in the trie
 // else returns false.
 func (ts *trieNode) contains(key string) bool {
 	return ts.getNode(key) != nil
 }
 
-// Returns the value for the key else
+// get returns the value for the key else
 // returns nil, if the key is not in the trie.
 func (ts *trieNode) get(key string) interface{} {
 	if node := ts.getNode(key); node != nil {
@@ -83,6 +84,9 @@ func (ts *trieNode) get(key string) interface{} {
 	return nil
 }
 
+// delete removed the value for the key
+// and returns deleted as true if the key has a value,
+// empty returns true if the entire path is deleted.
 func (ts *trieNode) delete(key string) (deleted bool, empty bool) {
 	deleted, empty = false, false
 	if len(key) == 0 {
