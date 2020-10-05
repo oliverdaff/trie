@@ -1,6 +1,7 @@
 package trie
 
 import (
+	"errors"
 	"sort"
 )
 
@@ -16,45 +17,57 @@ type trieNode struct {
 //
 // - key: the possibly empty key to store in the trie
 // - value: the value to be associated with the key
-func newTrieNode(key string, value interface{}) *trieNode {
+func newTrieNode(key string, value interface{}) (*trieNode, error) {
+	if value == nil && len(key) != 0 {
+		return nil, errors.New("nil value passed to newTrieNode with non null key")
+	}
 	links := make(map[byte]*trieNode)
 	if len(key) == 0 {
 		return &trieNode{
 			size:  0,
 			value: value,
 			links: links,
-		}
+		}, nil
 	}
-	node := newTrieNode(key[1:], value)
+	node, err := newTrieNode(key[1:], value)
+	if err != nil {
+		return nil, err
+	}
 	links[key[0]] = node
 
 	return &trieNode{
 		size:  1,
 		links: links,
-	}
+	}, nil
 
 }
 
 // put stores a key value pair in the trie.
 // Returns true unless the key was already in the trie and got updated.
-func (ts *trieNode) put(key string, value interface{}) bool {
+func (ts *trieNode) put(key string, value interface{}) (bool, error) {
 	if len(key) == 0 {
 		isNewKey := ts.value == nil
 		ts.value = value
-		return isNewKey
+		return isNewKey, nil
 	}
 	next := key[0]
 	if nextNode, ok := ts.links[next]; ok {
-		isNewKey := nextNode.put(key[1:], value)
+		isNewKey, err := nextNode.put(key[1:], value)
+		if err != nil {
+			return false, err
+		}
 		if isNewKey {
 			ts.size++
 		}
-		return isNewKey
+		return isNewKey, nil
 	}
 	ts.size++
-	node := newTrieNode(key[1:], value)
+	node, err := newTrieNode(key[1:], value)
+	if err != nil {
+		return false, err
+	}
 	ts.links[next] = node
-	return true
+	return true, nil
 }
 
 //	getNode returns the node with the given key

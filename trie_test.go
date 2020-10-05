@@ -11,12 +11,12 @@ func TestNewTrieNode(t *testing.T) {
 		value        interface{}
 		expectedSize int
 	}{
-		{"www.testing.com", nil, 1},
+		{"www.testing.com", 1, 1},
 	}
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%s", tt.key)
 		t.Run(testname, func(t *testing.T) {
-			node := newTrieNode(tt.key, tt.value)
+			node, _ := newTrieNode(tt.key, tt.value)
 			if node.size != tt.expectedSize {
 				t.Errorf("Expected size %d go %d", tt.expectedSize, node.size)
 			}
@@ -55,9 +55,9 @@ func TestPut(t *testing.T) {
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%v", tt.params)
 		t.Run(testname, func(t *testing.T) {
-			node := newTrieNode("", nil)
+			node, _ := newTrieNode("", nil)
 			for _, param := range tt.params {
-				newKey := node.put(param.key, param.value)
+				newKey, _ := node.put(param.key, param.value)
 				if node.size != param.expectedSize {
 					t.Errorf("Expected size %d go %d", param.expectedSize, node.size)
 				}
@@ -85,9 +85,9 @@ func TestGetNode(t *testing.T) {
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%v", tt.params)
 		t.Run(testname, func(t *testing.T) {
-			node := newTrieNode("", nil)
+			node, _ := newTrieNode("", 1)
 			for _, param := range tt.params {
-				newKey := node.put(param.key, param.value)
+				newKey, _ := node.put(param.key, param.value)
 				if node.size != param.expectedSize {
 					t.Errorf("Expected size %d go %d", param.expectedSize, node.size)
 				}
@@ -122,7 +122,7 @@ func TestContains(t *testing.T) {
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%v", tt.params)
 		t.Run(testname, func(t *testing.T) {
-			node := newTrieNode("", nil)
+			node, _ := newTrieNode("", 1)
 			for _, param := range tt.params {
 				node.put(param.key, param.value)
 			}
@@ -153,7 +153,7 @@ func TestGet(t *testing.T) {
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%v", tt.params)
 		t.Run(testname, func(t *testing.T) {
-			node := newTrieNode("", nil)
+			node, _ := newTrieNode("", 1)
 			for _, param := range tt.params {
 				node.put(param.key, param.value)
 			}
@@ -193,11 +193,15 @@ func TestDelete(t *testing.T) {
 				DeleteValue{"www.test.com", true, false},
 				DeleteValue{"www.example.com", true, true},
 			},
-		}}
+		},
+	}
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%v", tt.params)
 		t.Run(testname, func(t *testing.T) {
-			node := newTrieNode("", nil)
+			node, err := newTrieNode("", nil)
+			if err != nil {
+				t.Errorf("Error not expected")
+			}
 			for _, param := range tt.params {
 				node.put(param.key, param.value)
 			}
@@ -243,12 +247,11 @@ func TestLongestPrefix(t *testing.T) {
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%v", tt.params)
 		t.Run(testname, func(t *testing.T) {
-			node := newTrieNode("", nil)
+			node, _ := newTrieNode("", 1)
 			for _, param := range tt.params {
 				node.put(param.key, param.value)
 			}
 			prefix := node.longestPrefixOf(tt.prefix, 0)
-			fmt.Printf("Prefix %v", prefix)
 			if tt.expectedPrefix != prefix {
 				t.Errorf("Expected prefix %s got %s", tt.expectedPrefix, prefix)
 			}
