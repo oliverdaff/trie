@@ -232,6 +232,13 @@ func TestLongestPrefix(t *testing.T) {
 		},
 			"www.test.co.uk", "www.test",
 		},
+		{[]PutValue{
+			PutValue{"www.test.com", 1, 1, true},
+			PutValue{"www.test", 1, 1, true},
+			PutValue{"www", 1, 1, true},
+		},
+			"www.example.com", "www",
+		},
 	}
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%v", tt.params)
