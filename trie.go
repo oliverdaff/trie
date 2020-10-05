@@ -113,19 +113,18 @@ func (ts *trieNode) delete(key string) (deleted bool, empty bool) {
 	return
 }
 
-func (ts *trieNode) longestPrefixOf(s string, sIndex int) (result *string) {
-	result = nil
+func (ts *trieNode) longestPrefixOf(s string, sIndex int) (result string) {
+	result = ""
 	if sIndex == len(s) {
 		if ts.value != nil {
-			result = &s
+			result = s
 		}
 	} else {
 		next := s[sIndex]
 		if nextNode, ok := ts.links[next]; ok {
 			result = nextNode.longestPrefixOf(s, sIndex+1)
-			if result == nil && !(ts.value == nil) {
-				partial := s[:sIndex]
-				result = &partial
+			if result == "" && ts.value != nil {
+				return s[:sIndex]
 			}
 		}
 	}

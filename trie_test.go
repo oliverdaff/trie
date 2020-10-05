@@ -214,3 +214,38 @@ func TestDelete(t *testing.T) {
 		})
 	}
 }
+
+func TestLongestPrefix(t *testing.T) {
+	var tests = []struct {
+		params         []PutValue
+		prefix         string
+		expectedPrefix string
+	}{
+		{[]PutValue{
+			PutValue{"www.test.com", 1, 1, true},
+		},
+			"www.test.com", "www.test.com",
+		},
+		{[]PutValue{
+			PutValue{"www.test.com", 1, 1, true},
+			PutValue{"www.test", 1, 1, true},
+		},
+			"www.test.co.uk", "www.test",
+		},
+	}
+	for _, tt := range tests {
+		testname := fmt.Sprintf("%v", tt.params)
+		t.Run(testname, func(t *testing.T) {
+			node := newTrieNode("", nil)
+			for _, param := range tt.params {
+				node.put(param.key, param.value)
+			}
+			prefix := node.longestPrefixOf(tt.prefix, 0)
+			fmt.Printf("Prefix %v", prefix)
+			if tt.expectedPrefix != prefix {
+				t.Errorf("Expected prefix %s got %s", tt.expectedPrefix, prefix)
+			}
+
+		})
+	}
+}
