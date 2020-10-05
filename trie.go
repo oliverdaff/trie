@@ -158,6 +158,10 @@ func (a bytes) Less(i, j int) bool { return a[i] < a[j] }
 func (ts *trieNode) items(path []byte) <-chan nodeKeyValue {
 	ch := make(chan nodeKeyValue, 1)
 	go func() {
+		if ts == nil {
+			close(ch)
+			return
+		}
 		if ts.value != nil {
 			ch <- nodeKeyValue{key: string(path), value: ts.value}
 		}

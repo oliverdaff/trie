@@ -259,3 +259,62 @@ func TestLongestPrefix(t *testing.T) {
 		})
 	}
 }
+
+func TestItems(t *testing.T) {
+	var tests = []struct {
+		params        []PutValue
+		nodekeyValues []nodeKeyValue
+	}{
+		{[]PutValue{
+			PutValue{"a", 1, 1, true},
+		},
+			[]nodeKeyValue{
+				nodeKeyValue{"a", 1},
+			},
+		},
+		{[]PutValue{
+			PutValue{"b", 1, 1, true},
+			PutValue{"a", 1, 1, true},
+		},
+			[]nodeKeyValue{
+				nodeKeyValue{"a", 1},
+				nodeKeyValue{"b", 1},
+			},
+		},
+		{[]PutValue{
+			PutValue{"ab", 1, 1, true},
+			PutValue{"aa", 1, 1, true},
+			PutValue{"a", 1, 1, true},
+		},
+			[]nodeKeyValue{
+				nodeKeyValue{"a", 1},
+				nodeKeyValue{"aa", 1},
+				nodeKeyValue{"ab", 1},
+			},
+		},
+	}
+	for _, tt := range tests {
+		testname := fmt.Sprintf("%v", tt.params)
+		t.Run(testname, func(t *testing.T) {
+			node, _ := newTrieNode("", nil)
+			for _, param := range tt.params {
+				node.put(param.key, param.value)
+			}
+			itemsChan := node.items(make([]byte, 0))
+			items := make([]nodeKeyValue, 0)
+			for item := range itemsChan {
+				items = append(items, item)
+			}
+
+			for i := 0; i < len(tt.nodekeyValues); i++ {
+				if items[i].key != tt.nodekeyValues[i].key {
+					t.Errorf("Expected key %s got %s", tt.nodekeyValues[i].key, items[i].key)
+				}
+				if items[i].value != tt.nodekeyValues[i].value {
+					t.Errorf("Expected value %s got %s", tt.nodekeyValues[i].value, items[i].value)
+				}
+			}
+
+		})
+	}
+}
