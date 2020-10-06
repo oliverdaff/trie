@@ -55,6 +55,26 @@ func (ts *Trie) Contains(key string) (bool, error) {
 	return ts.root.contains(key), nil
 }
 
+// Size returns the number of keys in the tri
+func (ts *Trie) Size() int {
+	return ts.root.size
+}
+
+// IsEmpty returns true if the Trie contains no keys
+func (ts *Trie) IsEmpty() bool {
+	return ts.Size() == 0
+}
+
+// LongestPrefixOf returns the longest key in the Trie that
+// is a prefix of passed in key.
+func (ts *Trie) LongestPrefixOf(key string) (string, error) {
+	if key == "" {
+		return "", errors.New("Can not search empty string as key")
+	}
+	return ts.root.longestPrefixOf(key, 0), nil
+
+}
+
 // trieNode is a internal representation of a trie.
 // Each node is root of its sub-trie. trieNode allows searching and adding new key-value pairs.
 type trieNode struct {
