@@ -38,6 +38,7 @@ func (ts *Trie) Get(key string) interface{} {
 //Returns true if the key was deleted.
 func (ts *Trie) Delete(key string) bool {
 	deleted, _ := ts.root.delete(key)
+	return deleted
 }
 
 // trieNode is a internal representation of a trie.
