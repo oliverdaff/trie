@@ -12,6 +12,32 @@ func TestNewTrie(t *testing.T) {
 	}
 }
 
+func TestTriePut(t *testing.T) {
+	var empty int
+	var tests = []struct {
+		key           string
+		value         interface{}
+		errorExpected bool
+	}{
+		{"www.testing.com", 1, false},
+		{"www.testing.com", nil, true},
+		{"www.testing.com", empty, false},
+	}
+	for _, tt := range tests {
+		testname := fmt.Sprintf("%s", tt.key)
+		t.Run(testname, func(t *testing.T) {
+			trie := NewTrie()
+			err := trie.Put(tt.key, tt.value)
+			if err == nil && tt.errorExpected {
+				t.Errorf("Expected a error")
+			}
+			if err != nil && !tt.errorExpected {
+				t.Errorf("Error not expected %s", err)
+			}
+		})
+	}
+}
+
 func TestNewTrieNode(t *testing.T) {
 	var tests = []struct {
 		key          string

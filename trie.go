@@ -16,6 +16,14 @@ func NewTrie() *Trie {
 	return &Trie{root: node}
 }
 
+func (ts *Trie) Put(key string, val interface{}) error {
+	if key == "" {
+		return errors.New("Can not put empty string as key")
+	}
+	_, err := ts.root.put(key, val)
+	return err
+}
+
 // trieNode is a internal representation of a trie.
 // Each node is root of its sub-trie. trieNode allows searching and adding new key-value pairs.
 type trieNode struct {
