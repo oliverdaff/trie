@@ -16,12 +16,21 @@ func NewTrie() *Trie {
 	return &Trie{root: node}
 }
 
+// Put inserts a string key into the trie
+// with the given value.
+// The key must not be empty and the value must
+// not but nil.
 func (ts *Trie) Put(key string, val interface{}) error {
 	if key == "" {
 		return errors.New("Can not put empty string as key")
 	}
 	_, err := ts.root.put(key, val)
 	return err
+}
+
+// Get returns the value for the given key else nil.
+func (ts *Trie) Get(key string) interface{} {
+	return ts.root.get(key)
 }
 
 // trieNode is a internal representation of a trie.
