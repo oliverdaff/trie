@@ -18,8 +18,8 @@ jobs:
     docker:
       - image: "circleci/golang:<< parameters.version >>"
         auth:
-          - username: oliverdaff
-          - password: $DOCKERHUB_PASSWORD
+          username: oliverdaff
+          password: $DOCKERHUB_PASSWORD
     working_directory: /go/src/github.com/oliverdaff/trie
     environment:
       GO111MODULE: "on"
