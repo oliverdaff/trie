@@ -33,6 +33,13 @@ func (ts *Trie) Get(key string) interface{} {
 	return ts.root.get(key)
 }
 
+//Delete removes key if a value is found in the
+//Trie associated with the key.
+//Returns true if the key was deleted.
+func (ts *Trie) Delete(key string) bool {
+	deleted, _ := ts.root.delete(key)
+}
+
 // trieNode is a internal representation of a trie.
 // Each node is root of its sub-trie. trieNode allows searching and adding new key-value pairs.
 type trieNode struct {
