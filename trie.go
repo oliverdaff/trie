@@ -29,16 +29,30 @@ func (ts *Trie) Put(key string, val interface{}) error {
 }
 
 // Get returns the value for the given key else nil.
-func (ts *Trie) Get(key string) interface{} {
-	return ts.root.get(key)
+func (ts *Trie) Get(key string) (interface{}, error) {
+	if key == "" {
+		return nil, errors.New("Can not get empty string as key")
+	}
+	return ts.root.get(key), nil
 }
 
 //Delete removes key if a value is found in the
 //Trie associated with the key.
 //Returns true if the key was deleted.
-func (ts *Trie) Delete(key string) bool {
+func (ts *Trie) Delete(key string) (bool, error) {
+	if key == "" {
+		return false, errors.New("Can not delete empty string as key")
+	}
 	deleted, _ := ts.root.delete(key)
-	return deleted
+	return deleted, nil
+}
+
+// Contains returns true if the key is in the trie.
+func (ts *Trie) Contains(key string) (bool, error) {
+	if key == "" {
+		return false, errors.New("Can not delete empty string as key")
+	}
+	return ts.root.contains(key), nil
 }
 
 // trieNode is a internal representation of a trie.
