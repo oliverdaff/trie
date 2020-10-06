@@ -5,6 +5,13 @@ import (
 	"testing"
 )
 
+func TestNewTrie(t *testing.T) {
+	trie := NewTrie()
+	if trie == nil {
+		t.Error("Trie must not be null")
+	}
+}
+
 func TestNewTrieNode(t *testing.T) {
 	var tests = []struct {
 		key          string

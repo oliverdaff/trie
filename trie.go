@@ -5,6 +5,17 @@ import (
 	"sort"
 )
 
+// Trie can store strings
+type Trie struct {
+	root *trieNode
+}
+
+// NewTrie creates a new trie
+func NewTrie() *Trie {
+	node, _ := newTrieNode("", nil)
+	return &Trie{root: node}
+}
+
 // trieNode is a internal representation of a trie.
 // Each node is root of its sub-trie. trieNode allows searching and adding new key-value pairs.
 type trieNode struct {
