@@ -75,6 +75,18 @@ func (ts *Trie) LongestPrefixOf(key string) (string, error) {
 
 }
 
+// KeysWithPrefix searches the Trie for all keys for which
+// the prefix is a valid prefix.
+func (ts *Trie) KeysWithPrefix(prefix string) <-chan string {
+	prefixNode := ts.root.getNode(prefix)
+	if prefixNode == nil {
+		return prefixNode.keys(bytes(prefix))
+	}
+	c := make(chan string, 0)
+	close(c)
+	return c
+}
+
 // trieNode is a internal representation of a trie.
 // Each node is root of its sub-trie. trieNode allows searching and adding new key-value pairs.
 type trieNode struct {
