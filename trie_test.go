@@ -57,6 +57,46 @@ func TestNewTrieNode(t *testing.T) {
 	}
 }
 
+func TestTrieKeysWithPrefix(t *testing.T) {
+	var tests = []struct {
+		keys            []string
+		prefix          string
+		lenReturnedKeys int
+	}{
+		{[]string{"www.test.com"}, "www", 1},
+		{[]string{
+			"www.test.com",
+			"www.example.com",
+		}, "www", 2},
+		{[]string{
+			"www.test.com",
+			"www.example.com",
+			"example.com",
+		}, "www", 2},
+	}
+	for _, tt := range tests {
+		testname := fmt.Sprintf("%s", tt.keys)
+		t.Run(testname, func(t *testing.T) {
+			for _, tt = range tests {
+				trie := NewTrie()
+				var empty int
+				for _, key := range tt.keys {
+					trie.Put(key, empty)
+				}
+				returnedKeys := make([]string, tt.lenReturnedKeys)
+				for returned := range trie.KeysWithPrefix(tt.prefix) {
+					returnedKeys = append(returnedKeys, returned)
+				}
+				if tt.lenReturnedKeys != len(returnedKeys) {
+					t.Errorf("Expected %d keys got %d",
+						tt.lenReturnedKeys, len(returnedKeys))
+				}
+
+			}
+		})
+	}
+}
+
 type PutValue struct {
 	key            string
 	value          interface{}
