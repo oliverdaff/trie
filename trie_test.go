@@ -191,15 +191,15 @@ func TestPut(t *testing.T) {
 		params []PutValue
 	}{
 		{[]PutValue{ // two keys
-			PutValue{"www.test.com", 1, 1, true},
-			PutValue{"www.example.com", 1, 2, true},
+			{"www.test.com", 1, 1, true},
+			{"www.example.com", 1, 2, true},
 		}},
 		{[]PutValue{ // single key
-			PutValue{"www.example.com", 1, 1, true},
+			{"www.example.com", 1, 1, true},
 		}},
 		{[]PutValue{ //update value
-			PutValue{"www.test.com", 1, 1, true},
-			PutValue{"www.test.com", 2, 1, false},
+			{"www.test.com", 1, 1, true},
+			{"www.test.com", 2, 1, false},
 		}},
 	}
 	for _, tt := range tests {
@@ -226,10 +226,10 @@ func TestGetNode(t *testing.T) {
 		nodeFound bool
 	}{
 		{[]PutValue{ // node found
-			PutValue{"www.test.com", 1, 1, true},
+			{"www.test.com", 1, 1, true},
 		}, "www.test.com", true},
 		{[]PutValue{ // node not found
-			PutValue{"www.example.com", 1, 1, true},
+			{"www.example.com", 1, 1, true},
 		}, "www.test.com", false},
 	}
 	for _, tt := range tests {
@@ -263,10 +263,10 @@ func TestContains(t *testing.T) {
 		keyFound bool
 	}{
 		{[]PutValue{ // node found
-			PutValue{"www.test.com", 1, 1, true},
+			{"www.test.com", 1, 1, true},
 		}, "www.test.com", true},
 		{[]PutValue{ // node not found
-			PutValue{"www.example.com", 1, 1, true},
+			{"www.example.com", 1, 1, true},
 		}, "www.test.com", false},
 	}
 	for _, tt := range tests {
@@ -291,13 +291,13 @@ func TestGet(t *testing.T) {
 		value  interface{}
 	}{
 		{[]PutValue{ // Get value
-			PutValue{"www.test.com", 1, 1, true},
+			{"www.test.com", 1, 1, true},
 		}, "www.test.com", 1},
 		{[]PutValue{ // Get Value
-			PutValue{"www.example.com", 2, 1, true},
+			{"www.example.com", 2, 1, true},
 		}, "www.example.com", 2},
 		{[]PutValue{ // Value not found
-			PutValue{"www.example.com", 2, 1, true},
+			{"www.example.com", 2, 1, true},
 		}, "www.test.com", nil},
 	}
 	for _, tt := range tests {
@@ -321,27 +321,27 @@ func TestDelete(t *testing.T) {
 		deletions []DeleteValue
 	}{
 		{[]PutValue{ // Delete value
-			PutValue{"www.test.com", 1, 1, true},
+			{"www.test.com", 1, 1, true},
 		},
 			[]DeleteValue{
-				DeleteValue{"www.test.com", true, true},
-				DeleteValue{"www.test.com", false, false},
+				{"www.test.com", true, true},
+				{"www.test.com", false, false},
 			},
 		},
 		{[]PutValue{ // Delete partial key
-			PutValue{"www.test.com", 1, 1, true},
+			{"www.test.com", 1, 1, true},
 		},
 			[]DeleteValue{
-				DeleteValue{"www.test", false, false},
+				{"www.test", false, false},
 			},
 		},
 		{[]PutValue{ // Delete shared key
-			PutValue{"www.test.com", 1, 1, true},
-			PutValue{"www.example.com", 1, 1, true},
+			{"www.test.com", 1, 1, true},
+			{"www.example.com", 1, 1, true},
 		},
 			[]DeleteValue{
-				DeleteValue{"www.test.com", true, false},
-				DeleteValue{"www.example.com", true, true},
+				{"www.test.com", true, false},
+				{"www.example.com", true, true},
 			},
 		},
 	}
@@ -376,20 +376,20 @@ func TestLongestPrefix(t *testing.T) {
 		expectedPrefix string
 	}{
 		{[]PutValue{
-			PutValue{"www.test.com", 1, 1, true},
+			{"www.test.com", 1, 1, true},
 		},
 			"www.test.com", "www.test.com",
 		},
 		{[]PutValue{
-			PutValue{"www.test.com", 1, 1, true},
-			PutValue{"www.test", 1, 1, true},
+			{"www.test.com", 1, 1, true},
+			{"www.test", 1, 1, true},
 		},
 			"www.test.co.uk", "www.test",
 		},
 		{[]PutValue{
-			PutValue{"www.test.com", 1, 1, true},
-			PutValue{"www.test", 1, 1, true},
-			PutValue{"www", 1, 1, true},
+			{"www.test.com", 1, 1, true},
+			{"www.test", 1, 1, true},
+			{"www", 1, 1, true},
 		},
 			"www.example.com", "www",
 		},
@@ -416,30 +416,30 @@ func TestItems(t *testing.T) {
 		nodekeyValues []NodeKeyValue
 	}{
 		{[]PutValue{
-			PutValue{"a", 1, 1, true},
+			{"a", 1, 1, true},
 		},
 			[]NodeKeyValue{
-				NodeKeyValue{"a", 1},
+				{"a", 1},
 			},
 		},
 		{[]PutValue{
-			PutValue{"b", 1, 1, true},
-			PutValue{"a", 1, 1, true},
+			{"b", 1, 1, true},
+			{"a", 1, 1, true},
 		},
 			[]NodeKeyValue{
-				NodeKeyValue{"a", 1},
-				NodeKeyValue{"b", 1},
+				{"a", 1},
+				{"b", 1},
 			},
 		},
 		{[]PutValue{
-			PutValue{"ab", 1, 1, true},
-			PutValue{"aa", 1, 1, true},
-			PutValue{"a", 1, 1, true},
+			{"ab", 1, 1, true},
+			{"aa", 1, 1, true},
+			{"a", 1, 1, true},
 		},
 			[]NodeKeyValue{
-				NodeKeyValue{"a", 1},
-				NodeKeyValue{"aa", 1},
-				NodeKeyValue{"ab", 1},
+				{"a", 1},
+				{"aa", 1},
+				{"ab", 1},
 			},
 		},
 	}

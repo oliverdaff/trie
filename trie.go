@@ -92,6 +92,7 @@ func (ts *Trie) Keys() <-chan string {
 	return ts.root.keys(bytes(""))
 }
 
+// Items returns all the key value pairs in the Trie.
 func (ts *Trie) Items() <-chan NodeKeyValue {
 	return ts.root.items(make([]byte, 0))
 }
