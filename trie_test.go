@@ -2,6 +2,7 @@ package trie
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -77,22 +78,59 @@ func TestTrieKeysWithPrefix(t *testing.T) {
 	for _, tt := range tests {
 		testname := fmt.Sprintf("%s", tt.keys)
 		t.Run(testname, func(t *testing.T) {
-			for _, tt = range tests {
-				trie := NewTrie()
-				var empty int
-				for _, key := range tt.keys {
-					trie.Put(key, empty)
-				}
-				returnedKeys := make([]string, tt.lenReturnedKeys)
-				for returned := range trie.KeysWithPrefix(tt.prefix) {
-					returnedKeys = append(returnedKeys, returned)
-				}
-				if tt.lenReturnedKeys != len(returnedKeys) {
-					t.Errorf("Expected %d keys got %d",
-						tt.lenReturnedKeys, len(returnedKeys))
-				}
-
+			trie := NewTrie()
+			var empty int
+			for _, key := range tt.keys {
+				trie.Put(key, empty)
 			}
+			returnedKeys := make([]string, 0)
+			for returned := range trie.KeysWithPrefix(tt.prefix) {
+				returnedKeys = append(returnedKeys, returned)
+			}
+			if tt.lenReturnedKeys != len(returnedKeys) {
+				t.Errorf("Expected %d keys got %d",
+					tt.lenReturnedKeys, len(returnedKeys))
+			}
+
+		})
+	}
+}
+
+func TestTrieKeys(t *testing.T) {
+	var tests = []struct {
+		keys []string
+	}{
+		{[]string{"www.test.com"}},
+		{[]string{
+			"www.test.com",
+			"www.example.com",
+		}},
+		{[]string{
+			"www.test.com",
+			"www.example.com",
+			"example.com",
+		}},
+	}
+	for _, tt := range tests {
+		testname := fmt.Sprintf("%s", tt.keys)
+		t.Run(testname, func(t *testing.T) {
+			trie := NewTrie()
+			var empty int
+			for i, key := range tt.keys {
+				trie.Put(key, empty)
+				if i+1 != trie.Size() {
+					t.Errorf("Expected size %d got %d", i, trie.Size())
+				}
+			}
+			returnedKeys := make([]string, 0)
+			for returned := range trie.Keys() {
+				returnedKeys = append(returnedKeys, returned)
+			}
+			if len(tt.keys) != len(returnedKeys) {
+				t.Errorf("Expected %d key got %d : %s",
+					len(tt.keys), len(returnedKeys), strings.Join(returnedKeys, ","))
+			}
+
 		})
 	}
 }

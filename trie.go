@@ -80,11 +80,16 @@ func (ts *Trie) LongestPrefixOf(key string) (string, error) {
 func (ts *Trie) KeysWithPrefix(prefix string) <-chan string {
 	prefixNode := ts.root.getNode(prefix)
 	if prefixNode == nil {
-		return prefixNode.keys(bytes(prefix))
+		c := make(chan string, 0)
+		close(c)
+		return c
 	}
-	c := make(chan string, 0)
-	close(c)
-	return c
+	return prefixNode.keys(bytes(prefix))
+}
+
+// Keys returns all keys in the Trie
+func (ts *Trie) Keys() <-chan string {
+	return ts.root.keys(bytes(""))
 }
 
 // trieNode is a internal representation of a trie.
@@ -144,6 +149,7 @@ func (ts *trieNode) put(key string, value interface{}) (bool, error) {
 		return isNewKey, nil
 	}
 	ts.size++
+	//create new node for remainder
 	node, err := newTrieNode(key[1:], value)
 	if err != nil {
 		return false, err
