@@ -92,6 +92,10 @@ func (ts *Trie) Keys() <-chan string {
 	return ts.root.keys(bytes(""))
 }
 
+func (ts *Trie) Items() <-chan NodeKeyValue {
+	return ts.root.items(make([]byte, 0))
+}
+
 // trieNode is a internal representation of a trie.
 // Each node is root of its sub-trie. trieNode allows searching and adding new key-value pairs.
 type trieNode struct {
@@ -232,7 +236,9 @@ func (ts *trieNode) longestPrefixOf(s string, sIndex int) (result string) {
 	return
 }
 
-type nodeKeyValue struct {
+// NodeKeyValue are the key and value pairs
+// stored in the trie.
+type NodeKeyValue struct {
 	key   string
 	value interface{}
 }
@@ -243,15 +249,15 @@ func (a bytes) Len() int           { return len(a) }
 func (a bytes) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a bytes) Less(i, j int) bool { return a[i] < a[j] }
 
-func (ts *trieNode) items(path []byte) <-chan nodeKeyValue {
-	ch := make(chan nodeKeyValue, 1)
+func (ts *trieNode) items(path []byte) <-chan NodeKeyValue {
+	ch := make(chan NodeKeyValue, 1)
 	go func() {
 		if ts == nil {
 			close(ch)
 			return
 		}
 		if ts.value != nil {
-			ch <- nodeKeyValue{key: string(path), value: ts.value}
+			ch <- NodeKeyValue{key: string(path), value: ts.value}
 		}
 		var sortedKeys bytes
 		sortedKeys = make([]byte, len(ts.links))

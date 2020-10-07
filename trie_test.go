@@ -135,6 +135,45 @@ func TestTrieKeys(t *testing.T) {
 	}
 }
 
+func TestTrieItems(t *testing.T) {
+	var tests = []struct {
+		keys []string
+	}{
+		{[]string{"www.test.com"}},
+		{[]string{
+			"www.test.com",
+			"www.example.com",
+		}},
+		{[]string{
+			"www.test.com",
+			"www.example.com",
+			"example.com",
+		}},
+	}
+	for _, tt := range tests {
+		testname := fmt.Sprintf("%s", tt.keys)
+		t.Run(testname, func(t *testing.T) {
+			trie := NewTrie()
+			var empty int
+			for i, key := range tt.keys {
+				trie.Put(key, empty)
+				if i+1 != trie.Size() {
+					t.Errorf("Expected size %d got %d", i, trie.Size())
+				}
+			}
+			returnedKeys := make([]NodeKeyValue, 0)
+			for returned := range trie.Items() {
+				returnedKeys = append(returnedKeys, returned)
+			}
+			if len(tt.keys) != len(returnedKeys) {
+				t.Errorf("Expected %d key got %d ",
+					len(tt.keys), len(returnedKeys))
+			}
+
+		})
+	}
+}
+
 type PutValue struct {
 	key            string
 	value          interface{}
@@ -374,22 +413,22 @@ func TestLongestPrefix(t *testing.T) {
 func TestItems(t *testing.T) {
 	var tests = []struct {
 		params        []PutValue
-		nodekeyValues []nodeKeyValue
+		nodekeyValues []NodeKeyValue
 	}{
 		{[]PutValue{
 			PutValue{"a", 1, 1, true},
 		},
-			[]nodeKeyValue{
-				nodeKeyValue{"a", 1},
+			[]NodeKeyValue{
+				NodeKeyValue{"a", 1},
 			},
 		},
 		{[]PutValue{
 			PutValue{"b", 1, 1, true},
 			PutValue{"a", 1, 1, true},
 		},
-			[]nodeKeyValue{
-				nodeKeyValue{"a", 1},
-				nodeKeyValue{"b", 1},
+			[]NodeKeyValue{
+				NodeKeyValue{"a", 1},
+				NodeKeyValue{"b", 1},
 			},
 		},
 		{[]PutValue{
@@ -397,10 +436,10 @@ func TestItems(t *testing.T) {
 			PutValue{"aa", 1, 1, true},
 			PutValue{"a", 1, 1, true},
 		},
-			[]nodeKeyValue{
-				nodeKeyValue{"a", 1},
-				nodeKeyValue{"aa", 1},
-				nodeKeyValue{"ab", 1},
+			[]NodeKeyValue{
+				NodeKeyValue{"a", 1},
+				NodeKeyValue{"aa", 1},
+				NodeKeyValue{"ab", 1},
 			},
 		},
 	}
@@ -412,7 +451,7 @@ func TestItems(t *testing.T) {
 				node.put(param.key, param.value)
 			}
 			itemsChan := node.items(make([]byte, 0))
-			items := make([]nodeKeyValue, 0)
+			items := make([]NodeKeyValue, 0)
 			for item := range itemsChan {
 				items = append(items, item)
 			}
