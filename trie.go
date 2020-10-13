@@ -253,15 +253,11 @@ func (a bytes) Less(i, j int) bool { return a[i] < a[j] }
 func (ts *trieNode) items(path []byte) <-chan NodeKeyValue {
 	ch := make(chan NodeKeyValue, 1)
 	go func() {
-		if ts == nil {
-			close(ch)
-			return
-		}
 		if ts.value != nil {
 			ch <- NodeKeyValue{key: string(path), value: ts.value}
 		}
 		var sortedKeys bytes
-		sortedKeys = make([]byte, len(ts.links))
+		sortedKeys = make([]byte, 0)
 		for key := range ts.links {
 			sortedKeys = append(sortedKeys, key)
 		}
