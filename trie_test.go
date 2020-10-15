@@ -457,11 +457,11 @@ func TestItems(t *testing.T) {
 			}
 
 			for i := 0; i < len(tt.nodekeyValues); i++ {
-				if items[i].key != tt.nodekeyValues[i].key {
-					t.Errorf("Expected key %s got %s", tt.nodekeyValues[i].key, items[i].key)
+				if items[i].Key != tt.nodekeyValues[i].Key {
+					t.Errorf("Expected key %s got %s", tt.nodekeyValues[i].Key, items[i].Key)
 				}
-				if items[i].value != tt.nodekeyValues[i].value {
-					t.Errorf("Expected value %s got %s", tt.nodekeyValues[i].value, items[i].value)
+				if items[i].Value != tt.nodekeyValues[i].Value {
+					t.Errorf("Expected value %s got %s", tt.nodekeyValues[i].Value, items[i].Value)
 				}
 			}
 

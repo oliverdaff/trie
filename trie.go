@@ -240,8 +240,8 @@ func (ts *trieNode) longestPrefixOf(s string, sIndex int) (result string) {
 // NodeKeyValue are the key and value pairs
 // stored in the trie.
 type NodeKeyValue struct {
-	key   string
-	value interface{}
+	Key   string
+	Value interface{}
 }
 
 type bytes []byte
@@ -254,7 +254,7 @@ func (ts *trieNode) items(path []byte) <-chan NodeKeyValue {
 	ch := make(chan NodeKeyValue, 1)
 	go func() {
 		if ts.value != nil {
-			ch <- NodeKeyValue{key: string(path), value: ts.value}
+			ch <- NodeKeyValue{Key: string(path), Value: ts.value}
 		}
 		var sortedKeys bytes
 		sortedKeys = make([]byte, 0)
@@ -278,7 +278,7 @@ func (ts *trieNode) keys(path []byte) <-chan string {
 	ch := make(chan string, 1)
 	go func() {
 		for keyValue := range ts.items(path) {
-			ch <- keyValue.key
+			ch <- keyValue.Key
 		}
 		close(ch)
 	}()
